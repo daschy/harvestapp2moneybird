@@ -8,10 +8,12 @@ const limitArgParsed = parseInt(limitArg, 10);
 const limit = Number.isNaN(limitArgParsed) ? 1000 : limitArgParsed;
 
 const config = {
-  subdomain: 'miloertola',
-
-  email: process.env.EMAIL,
-  password: process.env.PASSWORD,
+  
+  harvest: {
+    subdomain: process.env.HARVEST_SUBDOMAIN,
+    email: process.env.HARVEST_EMAIL,
+    password: process.env.HARVEST_PASSWORD,
+  },
   moneybird: {
     token: process.env.MONEYBIRD_TOKEN,
     companyId: process.env.MONEYBIRD_COMPANY_ID,
@@ -21,9 +23,9 @@ const config = {
 }
 
 const harvestClient = new Harvest({
-  subdomain: config.subdomain,
-  email: config.email,
-  password: config.password
+  subdomain: config.harvest.subdomain,
+  email: config.harvest.email,
+  password: config.harvest.password
 });
 const moneyBirdClient = new Client(config.moneybird.token, config.moneybird.companyId);
 const promptGet = Promise.promisify(prompt.get);
@@ -50,15 +52,10 @@ promptGet(['invoice'])
         workflow_id: config.moneybird.workflowId,
         invoice_sequence_id: invoice.number,
       }
-      // "sales_invoice": {
-      //   "reference": "My first invoice",
-      //   "contact_id": 181903555240658001,
-      //   "details_attributes": { "0": { "description": "Table", "price": "10.5" } }
-      // }
     })
   })
-  .then((invoice)=>{
-    console.log(`invoice ${invoice.id} created`); 
+  .then((invoice) => {
+    console.log(`invoice ${invoice.id} created`);
     console.log(invoice);
   })
   // .then((salesInvoices) => {
